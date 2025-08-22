@@ -1,7 +1,7 @@
 package com.sauna_reservation.sauna_reservation.controllers;
 
+import java.time.temporal.IsoFields;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,14 +30,8 @@ public class ReservationController {
     @ResponseBody
     public ArrayList<Reservation> getReservations(@PathVariable int week){
 
-        var result = _reservationRepository.getByWeekNumber(week);
         ArrayList<Reservation> r = new ArrayList<>();
-
-        // Sort by day number into 7 x n dimensional arraylist
-        for (Reservation reservation : result) {
-
-            r.add(reservation);
-        }
+        _reservationRepository.getByWeekNumber(week).iterator().forEachRemaining(r::add);
 
         return r;
     }
@@ -45,6 +39,20 @@ public class ReservationController {
     @PostMapping()
     public Reservation postReservation(@RequestBody @Validated ReservationRequest request){
 
-        return null;
+        int weekNumber = request.timestamp().get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+        
+        // Try to find any reservations for given week, if any found, return null as no duplicate reservation should be made for each user.
+        for(Reservation r :_reservationRepository.getByWeekNumber(weekNumber)){    
+            if(r.userId == request.userId()){
+                return null;
+            }
+        }
+
+        // TODO: Add logic to check if the reservation slot is already taken.
+
+        Reservation newReservation = new Reservation(request.userId(), request.timestamp().toInstant());
+        _reservationRepository.save(newReservation);
+
+        return newReservation;
     }
 }

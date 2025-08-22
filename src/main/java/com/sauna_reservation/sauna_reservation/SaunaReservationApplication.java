@@ -22,7 +22,7 @@ public class SaunaReservationApplication {
 		return (args) -> {
 
 			var now = Instant.now();
-			var reservation = new Reservation(now);
+			var reservation = new Reservation(0, now);
 			
 			repo.save(reservation);
 		};

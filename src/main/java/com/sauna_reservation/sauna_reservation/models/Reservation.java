@@ -1,10 +1,8 @@
 package com.sauna_reservation.sauna_reservation.models;
 
 import java.time.Instant;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.IsoFields;
 
 import org.springframework.data.annotation.Transient;
 
@@ -24,15 +22,16 @@ public class Reservation {
     @Id    
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    public long id;
 
     @JsonIgnore
     @Column(columnDefinition = "timestamptz", nullable = false)
     public Instant startsAt;
     
+    public long userId; 
     public int weekNumber;
     
-    public Reservation(Instant start) {
+    public Reservation(long userId, Instant start) {
         startsAt = start;
     }
 
