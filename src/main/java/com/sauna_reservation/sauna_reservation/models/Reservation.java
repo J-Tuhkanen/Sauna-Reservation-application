@@ -32,7 +32,8 @@ public class Reservation {
     public int weekNumber;
     
     public Reservation(long userId, Instant start) {
-        startsAt = start;
+        this.userId = userId;
+        this.startsAt = start;
     }
 
     public Reservation(){}
